@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HexaFractal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <div class="title">六角形フラクタル</div>
+      <p class="subtitle">時間で変化するグラデーションと回転アニメーション</p>
+    </header>
+
+    <main>
+      <section class="canvas-wrapper">
+        <canvas id="fractal"></canvas>
+      </section>
+      <section class="info">
+        <div class="info-card">
+          <h2>使い方</h2>
+          <ul>
+            <li>キャンバスは画面サイズにあわせて自動でリサイズされます。</li>
+            <li>クリックするたびに配色シードが変わり、新しいグラデーションが生成されます。</li>
+            <li>アニメーションが重い場合は別タブを閉じるなどして負荷を下げてください。</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h2>しくみ</h2>
+          <p>
+            六角形を再帰的に分割し、各階層でサイズと回転を時間に応じて変化させています。
+            HSLカラーを利用して、シード値から連続的なグラデーションを生成しています。
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2024 HexaFractal</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
