@@ -4,9 +4,19 @@ const ctx = canvas.getContext("2d");
 let seed = Math.random() * 360;
 let startTime = performance.now();
 let depth = 5;
+let rotationSpeedDeg = 12;
+let shrinkFactor = 0.55;
+let spacingFactor = 1.12;
+let wobbleStrength = 0.2;
 
 const depthSlider = document.getElementById("depth");
 const depthValue = document.getElementById("depthValue");
+const rotationSpeedSlider = document.getElementById("rotationSpeed");
+const rotationSpeedValue = document.getElementById("rotationSpeedValue");
+const shrinkFactorSlider = document.getElementById("shrinkFactor");
+const shrinkFactorValue = document.getElementById("shrinkFactorValue");
+const spacingSlider = document.getElementById("spacing");
+const spacingValue = document.getElementById("spacingValue");
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -48,16 +58,17 @@ function drawHexagon(x, y, size, rotation, stroke, fill) {
 function drawFractal(x, y, size, depth, time, hueBase) {
   if (size < 4 || depth <= 0) return;
 
-  const wobble = Math.sin(time * 0.001 + depth) * 0.2;
-  const rotation = wobble + (time * 0.0002 + depth * 0.3);
+  const wobble = Math.sin(time * 0.001 + depth) * wobbleStrength;
+  const rotationSpeed = (rotationSpeedDeg * Math.PI) / (180 * 1000);
+  const rotation = wobble + (time * rotationSpeed + depth * 0.3);
   const hue = hueBase + depth * 22 + wobble * 40;
   const stroke = hsla(hue, 80, 70, 0.9);
   const fill = hsla(hue + 40, 70, 30, 0.35);
 
   drawHexagon(x, y, size, rotation, stroke, fill);
 
-  const nextSize = size * 0.55;
-  const radius = size * 1.12;
+  const nextSize = size * shrinkFactor;
+  const radius = size * spacingFactor;
 
   for (let i = 0; i < 6; i++) {
     const angle = rotation + (Math.PI / 3) * i;
@@ -98,9 +109,30 @@ function handleDepthChange(value) {
   depthValue.textContent = depth.toString();
 }
 
+function handleRotationChange(value) {
+  rotationSpeedDeg = Number(value);
+  rotationSpeedValue.textContent = `${rotationSpeedDeg}°/s`;
+}
+
+function handleShrinkChange(value) {
+  shrinkFactor = Number(value);
+  shrinkFactorValue.textContent = shrinkFactor.toFixed(2);
+}
+
+function handleSpacingChange(value) {
+  spacingFactor = Number(value);
+  spacingValue.textContent = spacingFactor.toFixed(2);
+}
+
 window.addEventListener("resize", resize);
 canvas.addEventListener("click", handleClick);
 depthSlider.addEventListener("input", (event) => handleDepthChange(event.target.value));
+rotationSpeedSlider.addEventListener("input", (event) => handleRotationChange(event.target.value));
+shrinkFactorSlider.addEventListener("input", (event) => handleShrinkChange(event.target.value));
+spacingSlider.addEventListener("input", (event) => handleSpacingChange(event.target.value));
 handleDepthChange(depthSlider.value);
+handleRotationChange(rotationSpeedSlider.value);
+handleShrinkChange(shrinkFactorSlider.value);
+handleSpacingChange(spacingSlider.value);
 resize();
 requestAnimationFrame(render);
