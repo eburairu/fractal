@@ -3,6 +3,10 @@ const ctx = canvas.getContext("2d");
 
 let seed = Math.random() * 360;
 let startTime = performance.now();
+let depth = 5;
+
+const depthSlider = document.getElementById("depth");
+const depthValue = document.getElementById("depthValue");
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -78,7 +82,7 @@ function render(time) {
 
   ctx.save();
   ctx.scale(1, 1);
-  drawFractal(rect.width / 2, rect.height / 2, size, 5, time, hueBase);
+  drawFractal(rect.width / 2, rect.height / 2, size, depth, time, hueBase);
   ctx.restore();
 
   requestAnimationFrame(render);
@@ -89,7 +93,14 @@ function handleClick() {
   startTime = performance.now();
 }
 
+function handleDepthChange(value) {
+  depth = Number(value);
+  depthValue.textContent = depth.toString();
+}
+
 window.addEventListener("resize", resize);
 canvas.addEventListener("click", handleClick);
+depthSlider.addEventListener("input", (event) => handleDepthChange(event.target.value));
+handleDepthChange(depthSlider.value);
 resize();
 requestAnimationFrame(render);
