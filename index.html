@@ -38,6 +38,48 @@
             step="1"
           />
           <p class="hint">深くするほどパターンが細かくなります。</p>
+
+          <label class="slider-label" for="rotationSpeed">
+            回転スピード
+            <span class="slider-value" id="rotationSpeedValue">12°/s</span>
+          </label>
+          <input
+            type="range"
+            id="rotationSpeed"
+            min="0"
+            max="40"
+            value="12"
+            step="1"
+          />
+          <p class="hint">角度変化の速さ。緩やかにしたいときは下げてください。</p>
+
+          <label class="slider-label" for="shrinkFactor">
+            縮小率
+            <span class="slider-value" id="shrinkFactorValue">0.55</span>
+          </label>
+          <input
+            type="range"
+            id="shrinkFactor"
+            min="0.4"
+            max="0.8"
+            value="0.55"
+            step="0.01"
+          />
+          <p class="hint">子の六角形の辺の長さ。値が大きいほど密度が高くなります。</p>
+
+          <label class="slider-label" for="spacing">
+            配置間隔
+            <span class="slider-value" id="spacingValue">1.12</span>
+          </label>
+          <input
+            type="range"
+            id="spacing"
+            min="0.9"
+            max="1.4"
+            value="1.12"
+            step="0.01"
+          />
+          <p class="hint">中心から子へ伸ばす距離。広げると透け感が出ます。</p>
         </div>
         <div class="info-card">
           <h2>使い方</h2>
