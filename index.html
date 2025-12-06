@@ -23,6 +23,22 @@
         <canvas id="fractal"></canvas>
       </section>
       <section class="info">
+        <div class="info-card controls">
+          <h2>パラメータ</h2>
+          <label class="slider-label" for="depth">
+            再帰の深さ
+            <span class="slider-value" id="depthValue">5</span>
+          </label>
+          <input
+            type="range"
+            id="depth"
+            min="3"
+            max="7"
+            value="5"
+            step="1"
+          />
+          <p class="hint">深くするほどパターンが細かくなります。</p>
+        </div>
         <div class="info-card">
           <h2>使い方</h2>
           <ul>
