@@ -1,0 +1,113 @@
+:root {
+  color-scheme: dark;
+  --bg: radial-gradient(circle at 20% 20%, #1e2a3b, #0c0f1a 60%);
+  --accent: #60f0ff;
+  --text: #e8f0ff;
+  --muted: #9ca9c6;
+  --card: rgba(19, 28, 46, 0.65);
+  --border: rgba(255, 255, 255, 0.05);
+  font-family: "Space Grotesk", system-ui, -apple-system, "Noto Sans JP", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
+  padding: 2.5rem 1.5rem 1rem;
+  text-align: center;
+}
+
+.title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  margin-top: 0.35rem;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 1.5rem;
+  padding: 0 1.5rem 2rem;
+}
+
+.canvas-wrapper {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: linear-gradient(120deg, rgba(96, 240, 255, 0.08), rgba(138, 111, 255, 0.08));
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+}
+
+#fractal {
+  width: 100%;
+  height: 100%;
+  display: block;
+  aspect-ratio: 4 / 3;
+}
+
+.info {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.info-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.info-card h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  color: var(--accent);
+}
+
+.info-card p,
+.info-card ul {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.info-card ul {
+  padding-left: 1.2rem;
+}
+
+footer {
+  text-align: center;
+  padding: 1rem 0 2rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 900px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+
+  .info {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+}
