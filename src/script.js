@@ -174,6 +174,9 @@ const typeLabel = document.getElementById("typeLabel");
 const typeHint = document.getElementById("typeHint");
 const randomizeButton = document.getElementById("randomize");
 
+let listenersBound = false;
+let hasInitialized = false;
+
 function resize() {
   const rect = canvas.getBoundingClientRect();
   const dpr = window.devicePixelRatio || 1;
@@ -535,20 +538,43 @@ function setupTypeOptions() {
   });
 }
 
-window.addEventListener("resize", resize);
-canvas.addEventListener("click", handleClick);
-depthSlider.addEventListener("input", (event) => handleDepthChange(event.target.value));
-rotationSpeedSlider.addEventListener("input", (event) => handleRotationChange(event.target.value));
-shrinkFactorSlider.addEventListener("input", (event) => handleShrinkChange(event.target.value));
-spacingSlider.addEventListener("input", (event) => handleSpacingChange(event.target.value));
-wobbleStrengthSlider.addEventListener("input", (event) => handleWobbleChange(event.target.value));
-delaySlider.addEventListener("input", (event) => handleDelayChange(event.target.value));
-hueRangeSlider.addEventListener("input", (event) => handleHueRangeChange(event.target.value));
-typeSelect.addEventListener("change", (event) => handleTypeChange(event.target.value));
-randomizeButton.addEventListener("click", randomizeAllParams);
+function bindEventListeners() {
+  if (listenersBound) return;
 
-setupTypeOptions();
-typeSelect.value = currentTypeKey;
-handleTypeChange(currentTypeKey);
-resize();
-requestAnimationFrame(render);
+  window.addEventListener("resize", resize);
+  canvas.addEventListener("click", handleClick);
+  depthSlider.addEventListener("input", (event) => handleDepthChange(event.target.value));
+  rotationSpeedSlider.addEventListener("input", (event) => handleRotationChange(event.target.value));
+  shrinkFactorSlider.addEventListener("input", (event) => handleShrinkChange(event.target.value));
+  spacingSlider.addEventListener("input", (event) => handleSpacingChange(event.target.value));
+  wobbleStrengthSlider.addEventListener("input", (event) => handleWobbleChange(event.target.value));
+  delaySlider.addEventListener("input", (event) => handleDelayChange(event.target.value));
+  hueRangeSlider.addEventListener("input", (event) => handleHueRangeChange(event.target.value));
+  typeSelect.addEventListener("change", (event) => handleTypeChange(event.target.value));
+  randomizeButton.addEventListener("click", randomizeAllParams);
+
+  listenersBound = true;
+}
+
+function initializeApp() {
+  if (hasInitialized) return;
+
+  bindEventListeners();
+  setupTypeOptions();
+  typeSelect.value = currentTypeKey;
+  handleTypeChange(currentTypeKey);
+  resize();
+  requestAnimationFrame(render);
+
+  hasInitialized = true;
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initializeApp, { once: true });
+} else {
+  initializeApp();
+}
+
+window.fractalApp = {
+  initialize: initializeApp,
+  setupTypeOptions,
+};
