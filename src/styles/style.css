@@ -42,9 +42,11 @@ body {
 main {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
-  gap: 1.5rem;
+  grid-template-rows: auto 1fr;
+  gap: 1.25rem;
   padding: 0 1.5rem 2rem;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .canvas-wrapper {
@@ -54,6 +56,9 @@ main {
   border: 1px solid var(--border);
   background: linear-gradient(120deg, rgba(96, 240, 255, 0.08), rgba(138, 111, 255, 0.08));
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 #fractal {
@@ -67,6 +72,10 @@ main {
   display: grid;
   gap: 1rem;
   align-content: start;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  overflow-y: auto;
+  padding-right: 0.35rem;
+  min-height: 0;
 }
 
 .info-card {
@@ -177,10 +186,6 @@ footer {
 }
 
 @media (max-width: 900px) {
-  main {
-    grid-template-columns: 1fr;
-  }
-
   .info {
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   }
