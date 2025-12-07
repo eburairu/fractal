@@ -5,6 +5,7 @@
 ## ローカルで確認する
 
 ビルドは不要です。ファイルを配置したままブラウザで `index.html` を開くだけで動作します。
+`python -m http.server` でプレビューする場合はリポジトリのルートを確実に配信する `serve.py` を使うと便利です。
 
 ## ファイル構成
 
@@ -15,7 +16,7 @@
 
 ```bash
 # プロジェクトルートで静的サーバーを起動する例
-python -m http.server 8000
+python serve.py --port 8000 --bind 0.0.0.0
 # または VS Code Live Server / netlify dev などお好きなツールを利用してください
 ```
 
