@@ -151,6 +151,28 @@ select:focus {
   box-shadow: 0 0 0 3px rgba(96, 240, 255, 0.25);
 }
 
+.ghost-button {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+}
+
+.ghost-button:hover {
+  background: rgba(96, 240, 255, 0.12);
+  border-color: rgba(96, 240, 255, 0.4);
+}
+
+.ghost-button:active {
+  transform: translateY(1px);
+}
+
 input[type="range"]::-moz-range-thumb {
   width: 18px;
   height: 18px;
