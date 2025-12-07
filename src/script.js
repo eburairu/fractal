@@ -86,7 +86,7 @@ const typeConfigs = {
   aurora: {
     label: "オーロラシフト",
     description: "淡い帯がゆっくりと重なり、やさしく揺れる光のカーテンを描きます。",
-    mode: "fractal",
+    mode: "aurora",
     params: {
       depth: 7,
       rotationSpeedDeg: 8,
@@ -100,7 +100,7 @@ const typeConfigs = {
   comet: {
     label: "コメットトレイル",
     description: "光の尾を引くような螺旋で、鋭い回転が流星群の軌跡を形作ります。",
-    mode: "spiral",
+    mode: "comet",
     params: {
       depth: 6,
       rotationSpeedDeg: 24,
@@ -114,7 +114,7 @@ const typeConfigs = {
   prism: {
     label: "プリズムグリッド",
     description: "微妙な速度差で回転する層が、格子状に光を散らすパターンです。",
-    mode: "concentric",
+    mode: "prism",
     params: {
       depth: 9,
       rotationSpeedDeg: 9,
@@ -128,7 +128,7 @@ const typeConfigs = {
   bloom: {
     label: "ブルームリング",
     description: "花弁のようなリングが穏やかに膨らみ、柔らかな光輪を作ります。",
-    mode: "orbital",
+    mode: "bloom",
     params: {
       depth: 5,
       rotationSpeedDeg: 14,
@@ -142,7 +142,7 @@ const typeConfigs = {
   ripple: {
     label: "リップルレイヤー",
     description: "水面の波紋のように、層がずれて重なり合う揺らぎを楽しめます。",
-    mode: "pendulum",
+    mode: "ripple",
     params: {
       depth: 7,
       rotationSpeedDeg: 12,
@@ -382,6 +382,131 @@ function drawPendulum(x, y, size, depth, time, hueBase) {
   });
 }
 
+function drawAurora(x, y, size, depth, time, hueBase) {
+  const speed = (rotationSpeedDeg * Math.PI) / (180 * 1000);
+  const bands = Math.max(3, depth);
+
+  for (let i = 0; i < bands; i++) {
+    const bandOffset = (i - (bands - 1) / 2) * size * 0.35;
+    const wave = Math.sin(time * 0.0012 + i * 0.8) * size * wobbleStrength * 0.35;
+    const bandY = y + bandOffset + wave;
+    const bandHue = hueBase + i * (hueRange / bands);
+    const segments = 6 + depth * 2;
+
+    for (let j = 0; j <= segments; j++) {
+      const progress = j / segments;
+      const phase = time + delayMs * (progress + i * 0.15);
+      const sway = Math.sin(phase * 0.0014 + progress * Math.PI * 2) * wobbleStrength;
+      const posX = x + (progress - 0.5) * size * 2.1;
+      const posY = bandY + Math.sin(progress * Math.PI * 2 + phase * 0.0009) * size * spacingFactor * 0.25;
+      const localSize = Math.max(3, size * 0.32 * Math.pow(shrinkFactor, progress * depth * 0.6));
+      const rotation = phase * speed * 0.45 + sway;
+      const stroke = hsla(bandHue + progress * hueRange * 0.4, 78, 76, 0.82);
+      const fill = hsla(bandHue + hueRange / 14, 70, 30, 0.18 + progress * 0.14);
+
+      drawHexagon(posX, posY, localSize, rotation, stroke, fill);
+    }
+  }
+}
+
+function drawComet(x, y, size, depth, time, hueBase) {
+  const speed = (rotationSpeedDeg * Math.PI) / (180 * 1000);
+  const tailLength = Math.max(12, depth * 6);
+  const angleBase = time * speed * 1.1;
+
+  for (let i = 0; i < tailLength; i++) {
+    const progress = i / tailLength;
+    const spiral = angleBase + progress * Math.PI * 3.2;
+    const wobble = Math.sin(time * 0.0016 + i * 0.7) * wobbleStrength;
+    const radius = size * (0.4 + spacingFactor * progress * 2.1);
+    const localSize = Math.max(3, size * (1 - progress * 0.82) * Math.pow(shrinkFactor, progress * depth));
+    const localX = x + Math.cos(spiral + wobble) * radius;
+    const localY = y + Math.sin(spiral + wobble) * radius;
+    const hue = hueBase + progress * hueRange;
+    const opacity = 0.9 - progress * 0.65;
+    const stroke = hsla(hue, 84, 70, opacity);
+    const fill = hsla(hue + hueRange / 18, 70, 32, opacity * 0.4);
+
+    drawHexagon(localX, localY, localSize, spiral + wobble * 0.8, stroke, fill);
+  }
+}
+
+function drawPrism(x, y, size, depth, time, hueBase) {
+  const speed = (rotationSpeedDeg * Math.PI) / (180 * 1000);
+  const grid = Math.max(2, depth - 2);
+  const spacing = size * 0.38 * spacingFactor;
+
+  for (let row = -grid; row <= grid; row++) {
+    for (let col = -grid; col <= grid; col++) {
+      const offsetX = (col + (row % 2 === 0 ? 0 : 0.5)) * spacing * 1.2;
+      const offsetY = row * spacing * 0.9;
+      const distance = Math.sqrt(offsetX ** 2 + offsetY ** 2);
+      const tilt = time * speed * 0.4 + (row + col) * 0.18;
+      const hue = hueBase + (row - col) * (hueRange / (grid * 3 + 4));
+      const intensity = Math.max(0.25, 1 - distance / (size * 2.4));
+      const localSize = Math.max(3, size * 0.28 * intensity);
+      const stroke = hsla(hue, 82, 74, 0.8 * intensity + 0.2);
+      const fill = hsla(hue + hueRange / 16, 68, 28, 0.16 + intensity * 0.2);
+
+      drawHexagon(x + offsetX, y + offsetY, localSize, tilt, stroke, fill);
+    }
+  }
+}
+
+function drawBloom(x, y, size, depth, time, hueBase) {
+  const speed = (rotationSpeedDeg * Math.PI) / (180 * 1000);
+  const rings = Math.max(4, depth + 1);
+
+  for (let r = 0; r < rings; r++) {
+    const progress = r / rings;
+    const ringRadius = size * (0.5 + spacingFactor * progress * 1.4 + Math.sin(time * 0.001 + r) * 0.08);
+    const petals = 6 + r * 2;
+    const petalSize = Math.max(3, size * Math.pow(shrinkFactor, r * 0.7));
+    const hue = hueBase + progress * hueRange;
+    const wobble = Math.sin(time * 0.0014 + r) * wobbleStrength;
+
+    for (let p = 0; p < petals; p++) {
+      const angle = (Math.PI * 2 * p) / petals + wobble * 0.6;
+      const rotation = time * speed * 0.5 + angle;
+      const stroke = hsla(hue + p * (hueRange / (petals * 2)), 86, 74, 0.88);
+      const fill = hsla(hue + hueRange / 20, 70, 32, 0.2 + progress * 0.12);
+
+      drawHexagon(
+        x + Math.cos(angle) * ringRadius,
+        y + Math.sin(angle) * ringRadius,
+        petalSize,
+        rotation,
+        stroke,
+        fill,
+      );
+    }
+  }
+}
+
+function drawRipple(x, y, size, depth, time, hueBase) {
+  const speed = (rotationSpeedDeg * Math.PI) / (180 * 1000);
+  const ripples = Math.max(3, depth);
+
+  for (let r = 0; r < ripples; r++) {
+    const phase = (time / (delayMs * 10)) + r * 0.3;
+    const wave = (phase % 1) * spacingFactor;
+    const radius = size * (0.8 + wave * 2.1 + r * 0.22);
+    const nodes = 10 + r * 2;
+    const hue = hueBase + r * (hueRange / ripples);
+    const alpha = Math.max(0.2, 0.9 - wave * 0.6);
+
+    for (let n = 0; n < nodes; n++) {
+      const angle = (Math.PI * 2 * n) / nodes + wave * Math.PI + Math.sin(time * 0.001 + n) * wobbleStrength * 0.3;
+      const spin = time * speed * 0.3 + angle * 0.6;
+      const localSize = Math.max(3, size * 0.24 * (1 - wave * 0.4));
+      const stroke = hsla(hue + n * (hueRange / (nodes * 3)), 82, 72, alpha);
+      const fill = hsla(hue + hueRange / 14, 68, 28, alpha * 0.4);
+
+      drawHexagon(x + Math.cos(angle) * radius, y + Math.sin(angle) * radius, localSize, spin, stroke, fill);
+    }
+  }
+}
+
 function clearCanvas() {
   ctx.fillStyle = "rgba(12, 15, 26, 0.22)";
   const rect = canvas.getBoundingClientRect();
@@ -402,6 +527,9 @@ function render(time) {
   const y = rect.height / 2;
 
   switch (mode) {
+    case "aurora":
+      drawAurora(x, y, size, depth, time, hueBase);
+      break;
     case "spiral":
       drawSpiral(x, y, size, depth, time, hueBase);
       break;
@@ -413,6 +541,18 @@ function render(time) {
       break;
     case "pendulum":
       drawPendulum(x, y, size, depth, time, hueBase);
+      break;
+    case "comet":
+      drawComet(x, y, size, depth, time, hueBase);
+      break;
+    case "prism":
+      drawPrism(x, y, size, depth, time, hueBase);
+      break;
+    case "bloom":
+      drawBloom(x, y, size, depth, time, hueBase);
+      break;
+    case "ripple":
+      drawRipple(x, y, size, depth, time, hueBase);
       break;
     default:
       drawFractal(x, y, size, depth, time, hueBase);
