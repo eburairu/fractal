@@ -90,6 +90,20 @@
           />
           <p class="hint">中心から子へ伸ばす距離。広げるほど重なりがゆったりと広がります。</p>
 
+          <label class="slider-label" for="wobbleStrength">
+            波の揺らぎ
+            <span class="slider-value" id="wobbleStrengthValue">0.20</span>
+          </label>
+          <input
+            type="range"
+            id="wobbleStrength"
+            min="0"
+            max="1"
+            value="0.2"
+            step="0.01"
+          />
+          <p class="hint">波打つ動きの強さ。0 に近づけると規則的な回転になります。</p>
+
           <label class="slider-label" for="delay">
             ディレイ
             <span class="slider-value" id="delayValue">80ms</span>
