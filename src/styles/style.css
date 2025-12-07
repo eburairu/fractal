@@ -46,7 +46,7 @@ main {
   gap: 1.25rem;
   padding: 0 1.5rem 2rem;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .canvas-wrapper {
@@ -57,7 +57,7 @@ main {
   background: linear-gradient(120deg, rgba(96, 240, 255, 0.08), rgba(138, 111, 255, 0.08));
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
   position: sticky;
-  top: 0;
+  top: 1rem;
   z-index: 1;
 }
 
@@ -188,5 +188,7 @@ footer {
 @media (max-width: 900px) {
   .info {
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    overflow: visible;
+    padding-right: 0;
   }
 }
