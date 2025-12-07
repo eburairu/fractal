@@ -69,6 +69,20 @@ const typeConfigs = {
       hueRange: 280,
     },
   },
+  pendulum: {
+    label: "振り子レイヤー",
+    description: "左右に揺れるアームが層を作り、重力に引かれるようなテンポで波打ちます。",
+    mode: "pendulum",
+    params: {
+      depth: 5,
+      rotationSpeedDeg: 9,
+      shrinkFactor: 0.68,
+      spacingFactor: 1.28,
+      wobbleStrength: 0.45,
+      delayMs: 140,
+      hueRange: 260,
+    },
+  },
 };
 
 const depthSlider = document.getElementById("depth");
@@ -254,6 +268,47 @@ function drawOrbital(x, y, size, depth, time, hueBase) {
   }
 }
 
+function drawPendulum(x, y, size, depth, time, hueBase) {
+  if (depth <= 0 || size < 3) return;
+
+  const speed = (rotationSpeedDeg * Math.PI) / (180 * 1000);
+  const swingBase = Math.sin(time * speed * 1.3 + depth * 0.35);
+  const swing = swingBase * (0.9 + wobbleStrength * 0.9);
+  const angleBase = Math.PI / 2 + swing;
+  const hue = hueBase + depth * (hueRange / 12) + swing * (hueRange / 7);
+  const stroke = hsla(hue, 86, 74, 0.92);
+  const fill = hsla(hue + hueRange / 16, 68, 32, 0.24);
+
+  drawHexagon(x, y, size, angleBase * 0.35, stroke, fill);
+
+  const armLength = size * spacingFactor * 1.5;
+  const childSize = size * shrinkFactor;
+  const connectorSize = Math.max(3, size * 0.45);
+
+  [-1, 1].forEach((direction, index) => {
+    const phase = time + delayMs * (index + 0.5);
+    const wobble = Math.sin(phase * 0.001 + depth * 0.2) * wobbleStrength;
+    const armAngle = angleBase + direction * (Math.PI / 7 + wobble * 0.6);
+    const midX = x + Math.cos(armAngle) * armLength * 0.55;
+    const midY = y + Math.sin(armAngle) * armLength * 0.55;
+    const endX = x + Math.cos(armAngle) * armLength;
+    const endY = y + Math.sin(armAngle) * armLength;
+
+    ctx.save();
+    ctx.strokeStyle = hsla(hue + direction * 6, 70, 78, 0.85);
+    ctx.lineWidth = Math.max(1.6, size * 0.06);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(midX, midY);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+    ctx.restore();
+
+    drawHexagon(midX, midY, connectorSize, armAngle + wobble * 0.5, stroke, fill);
+    drawPendulum(endX, endY, childSize, depth - 1, phase, hueBase + hueRange / 14);
+  });
+}
+
 function clearCanvas() {
   ctx.fillStyle = "rgba(12, 15, 26, 0.22)";
   const rect = canvas.getBoundingClientRect();
@@ -282,6 +337,9 @@ function render(time) {
       break;
     case "orbital":
       drawOrbital(x, y, size, depth, time, hueBase);
+      break;
+    case "pendulum":
+      drawPendulum(x, y, size, depth, time, hueBase);
       break;
     default:
       drawFractal(x, y, size, depth, time, hueBase);
