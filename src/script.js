@@ -8,6 +8,8 @@ let rotationSpeedDeg = 12;
 let shrinkFactor = 0.55;
 let spacingFactor = 1.12;
 let wobbleStrength = 0.2;
+let delayMs = 80;
+let hueRange = 240;
 let currentTypeKey = "classic";
 
 const typeConfigs = {
@@ -21,6 +23,8 @@ const typeConfigs = {
       shrinkFactor: 0.55,
       spacingFactor: 1.12,
       wobbleStrength: 0.2,
+      delayMs: 80,
+      hueRange: 240,
     },
   },
   spiral: {
@@ -33,6 +37,8 @@ const typeConfigs = {
       shrinkFactor: 0.6,
       spacingFactor: 1.0,
       wobbleStrength: 0.35,
+      delayMs: 120,
+      hueRange: 320,
     },
   },
   concentric: {
@@ -45,6 +51,8 @@ const typeConfigs = {
       shrinkFactor: 0.86,
       spacingFactor: 1.08,
       wobbleStrength: 0.15,
+      delayMs: 60,
+      hueRange: 200,
     },
   },
   lattice: {
@@ -57,6 +65,8 @@ const typeConfigs = {
       shrinkFactor: 0.5,
       spacingFactor: 1.25,
       wobbleStrength: 0.25,
+      delayMs: 90,
+      hueRange: 280,
     },
   },
 };
@@ -69,6 +79,10 @@ const shrinkFactorSlider = document.getElementById("shrinkFactor");
 const shrinkFactorValue = document.getElementById("shrinkFactorValue");
 const spacingSlider = document.getElementById("spacing");
 const spacingValue = document.getElementById("spacingValue");
+const delaySlider = document.getElementById("delay");
+const delayValue = document.getElementById("delayValue");
+const hueRangeSlider = document.getElementById("hueRange");
+const hueRangeValue = document.getElementById("hueRangeValue");
 const typeSelect = document.getElementById("type");
 const typeLabel = document.getElementById("typeLabel");
 const typeHint = document.getElementById("typeHint");
@@ -116,9 +130,9 @@ function drawFractal(x, y, size, depth, time, hueBase) {
   const wobble = Math.sin(time * 0.001 + depth) * wobbleStrength;
   const rotationSpeed = (rotationSpeedDeg * Math.PI) / (180 * 1000);
   const rotation = wobble + (time * rotationSpeed + depth * 0.3);
-  const hue = hueBase + depth * 22 + wobble * 40;
+  const hue = hueBase + depth * (hueRange / 10) + wobble * (hueRange / 6);
   const stroke = hsla(hue, 80, 70, 0.9);
-  const fill = hsla(hue + 40, 70, 30, 0.35);
+  const fill = hsla(hue + hueRange / 9, 70, 30, 0.35);
 
   drawHexagon(x, y, size, rotation, stroke, fill);
 
@@ -129,7 +143,7 @@ function drawFractal(x, y, size, depth, time, hueBase) {
     const angle = rotation + (Math.PI / 3) * i;
     const nx = x + Math.cos(angle) * radius;
     const ny = y + Math.sin(angle) * radius;
-    drawFractal(nx, ny, nextSize, depth - 1, time + i * 80, hueBase + 10);
+    drawFractal(nx, ny, nextSize, depth - 1, time + i * delayMs, hueBase + hueRange / 18);
   }
 }
 
@@ -139,13 +153,14 @@ function drawSpiral(x, y, size, depth, time, hueBase) {
 
   for (let i = 0; i < steps; i++) {
     const progress = i / steps;
-    const wobble = Math.sin(time * 0.001 + i * 0.6) * wobbleStrength;
-    const angle = time * speed * 0.6 + progress * Math.PI * 3 + wobble * 0.8;
+    const localTime = time + delayMs * progress * 0.8;
+    const wobble = Math.sin(localTime * 0.001 + i * 0.6) * wobbleStrength;
+    const angle = localTime * speed * 0.6 + progress * Math.PI * 3 + wobble * 0.8;
     const radius = size * (0.6 + spacingFactor * progress * 2.4);
     const localSize = Math.max(4, size * Math.pow(shrinkFactor, progress * depth));
-    const hue = hueBase + progress * 220 + wobble * 60;
+    const hue = hueBase + progress * hueRange + wobble * (hueRange / 4);
     const stroke = hsla(hue, 82, 68, 0.9);
-    const fill = hsla(hue + 28, 70, 28, 0.3);
+    const fill = hsla(hue + hueRange / 12, 70, 28, 0.3);
 
     drawHexagon(
       x + Math.cos(angle) * radius,
@@ -165,10 +180,10 @@ function drawConcentric(x, y, size, depth, time, hueBase) {
   for (let i = 0; i < layers; i++) {
     const factor = Math.pow(shrinkFactor, i * 0.65);
     const layerSize = Math.max(5, size * factor);
-    const rotation = time * speed * (1 + i * 0.08) + i * 0.45;
-    const hue = hueBase + i * 26;
+    const rotation = (time + delayMs * i * 0.6) * speed * (1 + i * 0.08) + i * 0.45;
+    const hue = hueBase + i * (hueRange / 9);
     const stroke = hsla(hue, 88, 72, 0.92);
-    const fill = hsla(hue + 20, 70, 25, 0.22 + i * 0.04);
+    const fill = hsla(hue + hueRange / 12, 70, 25, 0.22 + i * 0.04);
 
     drawHexagon(x, y, layerSize, rotation, stroke, fill);
   }
@@ -180,8 +195,8 @@ function drawConcentric(x, y, size, depth, time, hueBase) {
     for (let n = 0; n < nodes; n++) {
       const baseAngle = (Math.PI * 2 * n) / nodes;
       const rotation =
-        time * speed * (0.35 + j * 0.12) + baseAngle + wobbleStrength * Math.sin(time * 0.001 + n);
-      const hue = hueBase + j * 40 + n * 3;
+        (time + delayMs * (j + n * 0.2)) * speed * (0.35 + j * 0.12) + baseAngle + wobbleStrength * Math.sin(time * 0.001 + n);
+      const hue = hueBase + j * (hueRange / 6) + n * (hueRange / 80);
       const sizeScale = Math.max(0.4, 1 - j * 0.18);
       const childSize = Math.max(3, size * 0.35 * sizeScale);
       const stroke = hsla(hue, 80, 76, 0.85);
@@ -203,18 +218,26 @@ function drawOrbital(x, y, size, depth, time, hueBase) {
   const speed = (rotationSpeedDeg * Math.PI) / (180 * 1000);
   const rings = Math.max(3, depth + 1);
 
-  drawHexagon(x, y, size * 0.8, time * speed * 0.8, hsla(hueBase, 85, 74, 0.9), hsla(hueBase + 24, 70, 24, 0.26));
+  drawHexagon(
+    x,
+    y,
+    size * 0.8,
+    (time + delayMs * 0.8) * speed * 0.8,
+    hsla(hueBase, 85, 74, 0.9),
+    hsla(hueBase + hueRange / 10, 70, 24, 0.26),
+  );
 
   for (let r = 1; r <= rings; r++) {
     const radius = size * spacingFactor * (0.8 + r * 0.65);
     const count = 6 + r * 3;
     for (let i = 0; i < count; i++) {
       const angle = (Math.PI * 2 * i) / count;
-      const rotation = time * speed * (0.45 + r * 0.14) + angle + wobbleStrength * Math.sin(time * 0.0015 + i);
+      const rotation =
+        (time + delayMs * (r + i * 0.1)) * speed * (0.45 + r * 0.14) + angle + wobbleStrength * Math.sin(time * 0.0015 + i);
       const localSize = Math.max(3, size * Math.pow(shrinkFactor, r));
-      const hue = hueBase + r * 30 + i * 2;
+      const hue = hueBase + r * (hueRange / 8) + i * (hueRange / 90);
       const stroke = hsla(hue, 78, 72, 0.88);
-      const fill = hsla(hue + 18, 70, 28, 0.18);
+      const fill = hsla(hue + hueRange / 14, 70, 28, 0.18);
 
       drawHexagon(
         x + Math.cos(rotation) * radius,
@@ -290,6 +313,16 @@ function handleSpacingChange(value) {
   spacingValue.textContent = spacingFactor.toFixed(2);
 }
 
+function handleDelayChange(value) {
+  delayMs = Number(value);
+  delayValue.textContent = `${delayMs}ms`;
+}
+
+function handleHueRangeChange(value) {
+  hueRange = Number(value);
+  hueRangeValue.textContent = `${hueRange}°`;
+}
+
 function applyParams(params) {
   depthSlider.value = params.depth;
   handleDepthChange(params.depth);
@@ -304,6 +337,12 @@ function applyParams(params) {
   handleSpacingChange(params.spacingFactor);
 
   wobbleStrength = params.wobbleStrength;
+
+  delaySlider.value = params.delayMs;
+  handleDelayChange(params.delayMs);
+
+  hueRangeSlider.value = params.hueRange;
+  handleHueRangeChange(params.hueRange);
 }
 
 function handleTypeChange(value) {
@@ -332,6 +371,8 @@ depthSlider.addEventListener("input", (event) => handleDepthChange(event.target.
 rotationSpeedSlider.addEventListener("input", (event) => handleRotationChange(event.target.value));
 shrinkFactorSlider.addEventListener("input", (event) => handleShrinkChange(event.target.value));
 spacingSlider.addEventListener("input", (event) => handleSpacingChange(event.target.value));
+delaySlider.addEventListener("input", (event) => handleDelayChange(event.target.value));
+hueRangeSlider.addEventListener("input", (event) => handleHueRangeChange(event.target.value));
 typeSelect.addEventListener("change", (event) => handleTypeChange(event.target.value));
 
 setupTypeOptions();
