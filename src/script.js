@@ -86,6 +86,7 @@ const hueRangeValue = document.getElementById("hueRangeValue");
 const typeSelect = document.getElementById("type");
 const typeLabel = document.getElementById("typeLabel");
 const typeHint = document.getElementById("typeHint");
+const randomizeButton = document.getElementById("randomize");
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -323,6 +324,37 @@ function handleHueRangeChange(value) {
   hueRangeValue.textContent = `${hueRange}°`;
 }
 
+function randomFromSlider(slider) {
+  const min = Number(slider.min);
+  const max = Number(slider.max);
+  const step = Number(slider.step);
+  const steps = Math.round((max - min) / step);
+  const decimals = slider.step.includes(".") ? slider.step.split(".")[1].length : 0;
+  const value = min + step * Math.round(Math.random() * steps);
+  return Number(value.toFixed(decimals));
+}
+
+function randomizeAllParams() {
+  const keys = Object.keys(typeConfigs);
+  const randomKey = keys[Math.floor(Math.random() * keys.length)];
+  typeSelect.value = randomKey;
+  handleTypeChange(randomKey);
+
+  const randomParams = {
+    depth: randomFromSlider(depthSlider),
+    rotationSpeedDeg: randomFromSlider(rotationSpeedSlider),
+    shrinkFactor: randomFromSlider(shrinkFactorSlider),
+    spacingFactor: randomFromSlider(spacingSlider),
+    wobbleStrength: Number(Math.random().toFixed(2)),
+    delayMs: randomFromSlider(delaySlider),
+    hueRange: randomFromSlider(hueRangeSlider),
+  };
+
+  applyParams(randomParams);
+  seed = Math.random() * 360;
+  startTime = performance.now();
+}
+
 function applyParams(params) {
   depthSlider.value = params.depth;
   handleDepthChange(params.depth);
@@ -374,6 +406,7 @@ spacingSlider.addEventListener("input", (event) => handleSpacingChange(event.tar
 delaySlider.addEventListener("input", (event) => handleDelayChange(event.target.value));
 hueRangeSlider.addEventListener("input", (event) => handleHueRangeChange(event.target.value));
 typeSelect.addEventListener("change", (event) => handleTypeChange(event.target.value));
+randomizeButton.addEventListener("click", randomizeAllParams);
 
 setupTypeOptions();
 typeSelect.value = currentTypeKey;
