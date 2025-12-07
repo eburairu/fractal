@@ -1,0 +1,16 @@
+{
+  "name": "fractal",
+  "version": "1.0.0",
+  "description": "六角形の再帰フラクタルを描画するシンプルな Web アプリです。キャンバスのクリックで配色シードが切り替わり、時間に合わせて回転とグラデーションが変化します。",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "jsdom": "^27.2.0"
+  }
+}
