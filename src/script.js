@@ -83,6 +83,76 @@ const typeConfigs = {
       hueRange: 260,
     },
   },
+  aurora: {
+    label: "オーロラシフト",
+    description: "淡い帯がゆっくりと重なり、やさしく揺れる光のカーテンを描きます。",
+    mode: "fractal",
+    params: {
+      depth: 7,
+      rotationSpeedDeg: 8,
+      shrinkFactor: 0.62,
+      spacingFactor: 1.05,
+      wobbleStrength: 0.18,
+      delayMs: 70,
+      hueRange: 340,
+    },
+  },
+  comet: {
+    label: "コメットトレイル",
+    description: "光の尾を引くような螺旋で、鋭い回転が流星群の軌跡を形作ります。",
+    mode: "spiral",
+    params: {
+      depth: 6,
+      rotationSpeedDeg: 24,
+      shrinkFactor: 0.52,
+      spacingFactor: 1.18,
+      wobbleStrength: 0.28,
+      delayMs: 95,
+      hueRange: 360,
+    },
+  },
+  prism: {
+    label: "プリズムグリッド",
+    description: "微妙な速度差で回転する層が、格子状に光を散らすパターンです。",
+    mode: "concentric",
+    params: {
+      depth: 9,
+      rotationSpeedDeg: 9,
+      shrinkFactor: 0.82,
+      spacingFactor: 1.02,
+      wobbleStrength: 0.12,
+      delayMs: 55,
+      hueRange: 260,
+    },
+  },
+  bloom: {
+    label: "ブルームリング",
+    description: "花弁のようなリングが穏やかに膨らみ、柔らかな光輪を作ります。",
+    mode: "orbital",
+    params: {
+      depth: 5,
+      rotationSpeedDeg: 14,
+      shrinkFactor: 0.58,
+      spacingFactor: 1.34,
+      wobbleStrength: 0.22,
+      delayMs: 130,
+      hueRange: 300,
+    },
+  },
+  ripple: {
+    label: "リップルレイヤー",
+    description: "水面の波紋のように、層がずれて重なり合う揺らぎを楽しめます。",
+    mode: "pendulum",
+    params: {
+      depth: 7,
+      rotationSpeedDeg: 12,
+      shrinkFactor: 0.74,
+      spacingFactor: 1.15,
+      wobbleStrength: 0.32,
+      delayMs: 110,
+      hueRange: 220,
+    },
+  },
 };
 
 const depthSlider = document.getElementById("depth");
@@ -400,11 +470,6 @@ function randomFromSlider(slider) {
 }
 
 function randomizeAllParams() {
-  const keys = Object.keys(typeConfigs);
-  const randomKey = keys[Math.floor(Math.random() * keys.length)];
-  typeSelect.value = randomKey;
-  handleTypeChange(randomKey);
-
   const randomParams = {
     depth: randomFromSlider(depthSlider),
     rotationSpeedDeg: randomFromSlider(rotationSpeedSlider),
