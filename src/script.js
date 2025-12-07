@@ -509,9 +509,12 @@ function applyParams(params) {
 }
 
 function handleTypeChange(value) {
-  if (!typeConfigs[value]) return;
-  currentTypeKey = value;
-  const config = typeConfigs[value];
+  const nextKey = typeConfigs[value] ? value : currentTypeKey;
+  if (!typeConfigs[nextKey]) return;
+
+  currentTypeKey = nextKey;
+  typeSelect.value = currentTypeKey;
+  const config = typeConfigs[currentTypeKey];
   typeLabel.textContent = config.label;
   typeHint.textContent = config.description;
   applyParams(config.params);
@@ -520,10 +523,14 @@ function handleTypeChange(value) {
 }
 
 function setupTypeOptions() {
+  typeSelect.innerHTML = "";
   Object.entries(typeConfigs).forEach(([key, config]) => {
     const option = document.createElement("option");
     option.value = key;
     option.textContent = config.label;
+    if (key === currentTypeKey) {
+      option.selected = true;
+    }
     typeSelect.appendChild(option);
   });
 }
