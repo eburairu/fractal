@@ -79,6 +79,8 @@ const shrinkFactorSlider = document.getElementById("shrinkFactor");
 const shrinkFactorValue = document.getElementById("shrinkFactorValue");
 const spacingSlider = document.getElementById("spacing");
 const spacingValue = document.getElementById("spacingValue");
+const wobbleStrengthSlider = document.getElementById("wobbleStrength");
+const wobbleStrengthValue = document.getElementById("wobbleStrengthValue");
 const delaySlider = document.getElementById("delay");
 const delayValue = document.getElementById("delayValue");
 const hueRangeSlider = document.getElementById("hueRange");
@@ -314,6 +316,11 @@ function handleSpacingChange(value) {
   spacingValue.textContent = spacingFactor.toFixed(2);
 }
 
+function handleWobbleChange(value) {
+  wobbleStrength = Number(value);
+  wobbleStrengthValue.textContent = wobbleStrength.toFixed(2);
+}
+
 function handleDelayChange(value) {
   delayMs = Number(value);
   delayValue.textContent = `${delayMs}ms`;
@@ -345,7 +352,7 @@ function randomizeAllParams() {
     rotationSpeedDeg: randomFromSlider(rotationSpeedSlider),
     shrinkFactor: randomFromSlider(shrinkFactorSlider),
     spacingFactor: randomFromSlider(spacingSlider),
-    wobbleStrength: Number(Math.random().toFixed(2)),
+    wobbleStrength: randomFromSlider(wobbleStrengthSlider),
     delayMs: randomFromSlider(delaySlider),
     hueRange: randomFromSlider(hueRangeSlider),
   };
@@ -368,7 +375,8 @@ function applyParams(params) {
   spacingSlider.value = params.spacingFactor;
   handleSpacingChange(params.spacingFactor);
 
-  wobbleStrength = params.wobbleStrength;
+  wobbleStrengthSlider.value = params.wobbleStrength;
+  handleWobbleChange(params.wobbleStrength);
 
   delaySlider.value = params.delayMs;
   handleDelayChange(params.delayMs);
@@ -403,6 +411,7 @@ depthSlider.addEventListener("input", (event) => handleDepthChange(event.target.
 rotationSpeedSlider.addEventListener("input", (event) => handleRotationChange(event.target.value));
 shrinkFactorSlider.addEventListener("input", (event) => handleShrinkChange(event.target.value));
 spacingSlider.addEventListener("input", (event) => handleSpacingChange(event.target.value));
+wobbleStrengthSlider.addEventListener("input", (event) => handleWobbleChange(event.target.value));
 delaySlider.addEventListener("input", (event) => handleDelayChange(event.target.value));
 hueRangeSlider.addEventListener("input", (event) => handleHueRangeChange(event.target.value));
 typeSelect.addEventListener("change", (event) => handleTypeChange(event.target.value));
